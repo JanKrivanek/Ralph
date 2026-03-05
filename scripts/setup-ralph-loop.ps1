@@ -1,17 +1,49 @@
 # Ralph Loop Setup Script
 # Creates state file for in-session Ralph loop
 
-param(
-    [switch]$Help,
-    [int]$MaxIterations = 0,
-    [string]$CompletionPromise = "null",
-    [Parameter(ValueFromRemainingArguments)]
-    [string[]]$PromptParts
-)
+# Manual argument parsing (PowerShell param() binding doesn't work reliably
+# when called via `powershell -File` with mixed positional/named args)
 
 $ErrorActionPreference = "Stop"
 
-if ($Help) {
+$PromptParts = @()
+$MaxIterations = 0
+$CompletionPromise = "null"
+$ShowHelp = $false
+
+$i = 0
+while ($i -lt $args.Count) {
+    switch ($args[$i]) {
+        { $_ -eq "-h" -or $_ -eq "--help" } {
+            $ShowHelp = $true
+            $i++
+        }
+        "--max-iterations" {
+            $i++
+            if ($i -ge $args.Count -or $args[$i] -notmatch '^\d+$') {
+                Write-Host "Error: --max-iterations requires a positive integer" -ForegroundColor Red
+                exit 1
+            }
+            $MaxIterations = [int]$args[$i]
+            $i++
+        }
+        "--completion-promise" {
+            $i++
+            if ($i -ge $args.Count -or [string]::IsNullOrEmpty($args[$i])) {
+                Write-Host "Error: --completion-promise requires a text argument" -ForegroundColor Red
+                exit 1
+            }
+            $CompletionPromise = $args[$i]
+            $i++
+        }
+        default {
+            $PromptParts += $args[$i]
+            $i++
+        }
+    }
+}
+
+if ($ShowHelp) {
     @"
 Ralph Loop - Interactive self-referential development loop
 
@@ -58,7 +90,7 @@ MONITORING:
 }
 
 # Join prompt parts
-$Prompt = if ($PromptParts) { $PromptParts -join " " } else { "" }
+$Prompt = if ($PromptParts.Count -gt 0) { $PromptParts -join " " } else { "" }
 
 # Validate prompt is non-empty
 if ([string]::IsNullOrWhiteSpace($Prompt)) {
