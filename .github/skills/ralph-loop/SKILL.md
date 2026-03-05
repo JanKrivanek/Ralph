@@ -10,8 +10,14 @@ disable-model-invocation: true
 IMPORTANT, DO NOT SKIP THIS.
 The user will give you text after saying "Follow instructions in SKILL.md". Pass that text verbatim as $ARGUMENTS below.
 
-Execute the setup script to initialize the Ralph loop:
+Execute the setup script to initialize the Ralph loop.
 
+On Windows (PowerShell):
+```!
+powershell -ExecutionPolicy Bypass -File "<workspace_root>/scripts/setup-ralph-loop.ps1" $ARGUMENTS
+```
+
+On macOS/Linux (Bash):
 ```!
 "<workspace_root>/scripts/setup-ralph-loop.sh" $ARGUMENTS
 ```

@@ -4,7 +4,7 @@
     "Stop": [
       {
         "type": "command",
-        "command": ".github/hooks/stop-hook.sh"
+        "command": "powershell -ExecutionPolicy Bypass -File .github/hooks/stop-hook.ps1"
     }
     ]
   }
