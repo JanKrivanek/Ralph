@@ -1,5 +1,5 @@
 ---
-name: help
+name: ralph-help
 description: "Explain Ralph Wiggum technique and available commands"
 disable-model-invocation: true
 ---
